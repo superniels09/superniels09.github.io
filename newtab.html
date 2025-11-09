@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>New Tab</title>
+
+        <link href="https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@4.5.0/index.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" rel="stylesheet">
+
+        <link rel="stylesheet" href="https://www.nerdfonts.com/assets/css/webfont.css">
+
+        <style>
+			*, *::before, *::after {
+			  box-sizing: border-box;
+			}
+					
+			 html, body {
+				height: 100vh;
+			}
+
+            body {
+                font-family: "JetBrains Mono", "Inconsolata", "Cascadia Code", monospace;
+                background-color: #322e46;
+                
+                color: #eff1f5;
+                margin: 0;
+                padding: 10px;
+            }
+            
+			body::before {
+				content: "";
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background-image: url('newtab.png');
+				background-size: cover;
+				background-position: center;
+				background-repeat: no-repeat;
+				filter: blur(4px) brightness(0.4); /* blur + darken */
+				z-index: -1;
+			}
+
+            #title {
+            	padding-top: 20px;
+                text-align: center;
+                color: #f2d5cf;
+            }
+
+            #categories-container {
+                display: flex;
+                flex-direction: row; /* Arrange categories from left to right */
+                gap: 20px; /* Adds space between categories */
+                justify-content: center;
+                margin-top: 20px;
+            }
+
+            .category {
+                display: flex;
+                flex-direction: column; /* Keep links in a top to bottom order */
+                align-items: flex-start; /* Align the links to the left */
+                padding: 20px;
+                background-color: rgba(0.22, 0.2, 0.3, 0.2);
+                width: 100%;
+            }
+
+            .category-title {
+                margin-bottom: 10px;
+            }
+
+            .link-container {
+                display: flex;
+                align-items: center;
+                margin: 5px 0;
+                width: 100%;
+            }
+
+            .link-text {
+                color: #eff1f5;
+                text-decoration: none;
+                display: flex;
+                align-items: center;
+            }
+
+            .link-text:hover {
+                color: #f5c2e7;
+            }
+
+            .link-icon {
+                margin-right: 8px;
+                font-size: 0.9em;
+            }
+        </style>
+    </head>
+    <body>
+        <strong><div id="title">New Tab - @b - @t</div></strong>
+
+        <div id="categories-container"></div>
+
+
+        <script>
+            const categories = [
+                {
+                    "name": "Media",
+                    "color": "#e78284",
+                    "items": [
+                        // {"name": "Youtube", "icon": "nf-fa-youtube", "url": "https://youtube.com"},
+                        {"name": "Emby", "icon": "nf-md-emby", "url": "https://emby.vanbavel.eu/web/index.html#!/home"},
+                        {"name": "Reddit", "icon": "nf-md-reddit", "url": "https://www.reddit.com/"},
+                        {"name": "Whatsapp", "icon": "nf-md-whatsapp", "url": "https://web.whatsapp.com/"},
+                        {"name": "Spotify", "icon": "nf-fa-spotify", "url": "https://open.spotify.com/"},
+						{"name": "Lychee", "icon": "nf-fa-image", "url": "http://192.168.0.128:8080/gallery"}
+                    ]
+                },
+                {
+                    "name": "Utils",
+                    "color": "#babbf1",
+                    "items": [
+                        {"name": "Desmos", "icon": "nf-md-sine_wave", "url": "https://www.desmos.com/calculator"},
+                        {"name": "Temp Mail", "icon": "nf-cod-mail", "url": "https://temp-mail.org"},
+						{"name": "Nextcloud", "icon": "nf-fa-cloud", "url": "https://cloud.vanbavel.eu/apps/files/files"},
+                    ]
+                },
+                {
+                    "name": "Development",
+                    "color": "#a6d189",
+                    "items": [
+                        {"name": "Github", "icon": "nf-dev-github", "url": "https://github.com/"},
+						{"name": "Gitea", "icon": "nf-md-tea", "url": "http://192.168.0.128:3000/"},
+                        {"name": "Catppuccin", "icon": "nf-md-cat", "url": "https://catppuccin.com/palette/"},
+                        {"name": "Nerd Font Icons", "icon": "nf-fa-glasses", "url": "https://www.nerdfonts.com/cheat-sheet"}
+                    ]
+                }
+            ]
+
+            // Title
+            // Browser
+            var userAgent = navigator.userAgent;
+            var browserName = "Other"
+            if (/AppleWebKit/.test(userAgent)) {
+                // WebKit-based browser
+                if (/Chrome/.test(userAgent)) {
+                    // Chrome browser
+                    browserName = "Chromium"
+                } else {
+                    // Safari browser
+                    browserName = "Webkit"
+                }
+            } else if (/Firefox/.test(userAgent)) {
+                // Firefox browser
+                browserName = "Firefox"
+            }
+
+            const title = document.getElementById("title")
+            title.textContent = title.textContent.replace("@b", browserName)
+
+            // Datetime
+            const currentDate = new Date();
+            const day = String(currentDate.getDate()).padStart(2, '0');
+            const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+            const year = currentDate.getFullYear();
+            const hours = String(currentDate.getHours()).padStart(2, '0');
+            const minutes = String(currentDate.getMinutes()).padStart(2, '0');
+            const formattedDateTime = `${day}/${month}/${year} ${hours}:${minutes}`;
+            title.textContent = title.textContent.replace("@t", formattedDateTime)
+
+            document.title = title.textContent
+
+            // Links
+            const categoriesContainer = document.getElementById("categories-container")
+            
+            for (const category of categories) {
+                const container = document.createElement("div")
+                container.classList.add("category")
+
+                const categoryTitle = document.createElement("strong")
+                categoryTitle.classList.add("category-title")
+                categoryTitle.style.color = category.color
+                categoryTitle.textContent = category.name
+                container.appendChild(categoryTitle)
+
+                for (const item of category.items) {
+                    const linkContainer = document.createElement("div")
+                    linkContainer.classList.add("link-container")
+                    
+                    const linkText = document.createElement("a")
+                    linkText.classList.add("link-text")
+                    linkText.href = item.url
+                    
+                    const linkIcon = document.createElement("i")
+                    linkIcon.classList.add("nf", (item.icon || "nf-fa-heart"), "link-icon")
+                    linkIcon.style.color = category.color
+                    
+                    // Append icon to the link, then the text
+                    linkText.appendChild(linkIcon)
+                    linkText.appendChild(document.createTextNode(item.name))
+                    
+                    linkContainer.appendChild(linkText)
+                    container.appendChild(linkContainer)
+                }
+
+                categoriesContainer.appendChild(container)
+            }
+        </script>
+    </body>
+</html>
